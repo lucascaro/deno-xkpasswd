@@ -3,14 +3,21 @@
 import { getCLIArg } from "args.ts";
 import PasswordHelper from "password.ts";
 
-const args = getCLIArg("count", 1);
+(async function() {
+  const args = getCLIArg("count", 1);
+  const len = getCLIArg("length", 5);
 
-const pwd = PasswordHelper();
+  const pwd = await PasswordHelper();
 
-for (let i = 0; i < args; i++) {
-  generateAndPrint();
-}
+  for (let i = 0; i < args; i++) {
+    console.log(pwd.generatePassword(len));
+  }
 
-function generateAndPrint() {
-  console.log(pwd.generatePassword());
-}
+  const guesses = pwd.guessTime(len);
+  const guessesPerSecond = 1e12; // 1 Trillion per second!
+  const seconds = guesses / guessesPerSecond;
+  const time = Math.floor(seconds / 60 / 60 / 24 / 365);
+  console.log(
+    `\nA planetary scale botnet would take ${time} years to gues these!`
+  );
+})();

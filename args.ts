@@ -12,7 +12,8 @@ function parseArgs() {
   if (parsed === null) {
     parsed = parse(args.slice(1), {
       alias: {
-        c: ["count"]
+        c: ["count"],
+        l: ["length"]
       }
     });
   }

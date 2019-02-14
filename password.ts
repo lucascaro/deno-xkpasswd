@@ -1,7 +1,7 @@
 import { readFileSync } from "deno";
 import { random, seed } from "random.ts";
 
-export default function() {
+export default async function() {
   const decoder = new TextDecoder("utf-8");
   const file = readFileSync("/usr/share/dict/words");
   const words = decoder
@@ -9,12 +9,16 @@ export default function() {
     .split("\n")
     .filter((w) => w.length > 4);
 
+  await seed();
+
   return {
     randomWord(): string {
-      seed(Math.random() * Number.MAX_SAFE_INTEGER);
       return words[Math.floor(random() * words.length)];
     },
-    generatePassword(length: number = 5): string {
+    guessTime(l: number): number {
+      return Math.pow(words.length, l) - words.length * l;
+    },
+    generatePassword(length: number): string {
       return Array(length)
         .fill("1")
         .map(this.randomWord)

@@ -1,9 +1,21 @@
+import { open } from "deno";
+
 let m_w = 123456789;
 let m_z = 987654321;
 let mask = 0xffffffff;
 
-// Takes any integer
-export function seed(i) {
+async function randomSeed() {
+  const urandom = await open("/dev/urandom", "r");
+  const randomSeed = new Uint8Array(20);
+  let i = 0;
+  await urandom.read(randomSeed);
+  i = randomSeed.reduce((p, c) => p * 5 + c, 0);
+  console.log(`Random seed: ${i}`);
+  urandom.close();
+  return i;
+}
+export async function seed() {
+  const i = await randomSeed();
   m_w = (123456789 + i) & mask;
   m_z = (987654321 - i) & mask;
 }
