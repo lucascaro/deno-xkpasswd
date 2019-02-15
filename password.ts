@@ -1,27 +1,25 @@
-import { readFileSync } from "deno";
-import { random, seed } from "random.ts";
+import allWords from "english-words.json";
 
-export default async function() {
-  const decoder = new TextDecoder("utf-8");
-  const file = readFileSync("/usr/share/dict/words");
-  const words = decoder
-    .decode(file)
-    .split("\n")
-    .filter((w) => w.length > 4);
-
-  await seed();
+export default function(minWordLen: number, maxWordLen: number) {
+  const words = allWords.filter(
+    (w) => w.length >= minWordLen && w.length <= maxWordLen
+  );
 
   return {
     randomWord(): string {
-      return words[Math.floor(random() * words.length)];
+      const rnd = (Math.random() * words.length) >>> 0;
+      return words[rnd];
     },
     guessTime(l: number): number {
-      return Math.pow(words.length, l) - words.length * l;
+      const guesses = Math.pow(words.length, l) - words.length * l;
+      const guessesPerSecond = 1e12; // 1 Trillion per second!
+      const seconds = guesses / guessesPerSecond;
+      return seconds;
     },
     generatePassword(length: number): string {
       return Array(length)
         .fill("1")
-        .map(this.randomWord)
+        .map(() => this.randomWord())
         .join(" ");
     }
   };

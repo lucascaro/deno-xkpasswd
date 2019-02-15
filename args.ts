@@ -1,21 +1,23 @@
 import { args } from "deno";
 import { parse } from "https://deno.land/x/flags/mod.ts";
 
-let parsed = null;
-
-export function getCLIArg<T>(name: string, defVal: T): T {
-  const parsed = parseArgs();
-  return parsed[name] ? parsed[name] : defVal;
+export interface Aliases {
+  [key: string]: string | [string];
 }
-
-function parseArgs() {
-  if (parsed === null) {
-    parsed = parse(args.slice(1), {
-      alias: {
-        c: ["count"],
-        l: ["length"]
-      }
-    });
+export default function getArgParser<T>(
+  alias: Aliases
+): (name: string, defVal?: T) => T {
+  let parsed = null;
+  function parseArgs() {
+    if (parsed === null) {
+      parsed = parse(args.slice(1), {
+        alias
+      });
+    }
+    return parsed;
   }
-  return parsed;
+  return function(name: string, defVal?: T): T {
+    const parsed = parseArgs();
+    return parsed[name] ? parsed[name] : defVal;
+  };
 }
