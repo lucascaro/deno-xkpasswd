@@ -16,7 +16,7 @@ const count = Number(getCLIArg("count", 1));
 const len = Number(getCLIArg("numWords", 5));
 const minWordLen = Number(getCLIArg("min-word-len", 4));
 const maxWordLen = Number(getCLIArg("max-word-len", 10));
-const wordsFile = getCLIArg("words-file", "english-words.json");
+const wordsFile = getCLIArg("words-file", "/usr/share/dict/words");
 const showTime = !!getCLIArg("show-time");
 
 const pwd = PasswordHelper(wordsFile, minWordLen, maxWordLen);

@@ -6,7 +6,10 @@ export default function(
   maxWordLen: number
 ) {
   const decoder = new TextDecoder("utf-8");
-  const allWords = JSON.parse(decoder.decode(readFileSync(wordsFile)));
+  const plainText = decoder.decode(readFileSync(wordsFile));
+  const allWords = wordsFile.endsWith(".json")
+    ? JSON.parse(plainText)
+    : plainText.split("\n");
   const words = allWords.filter(
     (w) => w.length >= minWordLen && w.length <= maxWordLen
   );
