@@ -4,9 +4,9 @@ import { parse } from "https://deno.land/x/flags/mod.ts";
 export interface Aliases {
   [key: string]: string | [string];
 }
-export default function getArgParser<T>(
+export default function getArgParser(
   alias: Aliases
-): (name: string, defVal?: T) => T {
+): <T>(name: string, defVal?: T) => T {
   let parsed = null;
   function parseArgs() {
     if (parsed === null) {
@@ -16,7 +16,7 @@ export default function getArgParser<T>(
     }
     return parsed;
   }
-  return function(name: string, defVal?: T): T {
+  return function<T>(name: string, defVal?: T): T {
     const parsed = parseArgs();
     return parsed[name] ? parsed[name] : defVal;
   };

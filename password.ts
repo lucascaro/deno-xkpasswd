@@ -1,6 +1,12 @@
-import allWords from "english-words.json";
+import { readFileSync } from "deno";
 
-export default function(minWordLen: number, maxWordLen: number) {
+export default function(
+  wordsFile: string,
+  minWordLen: number,
+  maxWordLen: number
+) {
+  const decoder = new TextDecoder("utf-8");
+  const allWords = JSON.parse(decoder.decode(readFileSync(wordsFile)));
   const words = allWords.filter(
     (w) => w.length >= minWordLen && w.length <= maxWordLen
   );
