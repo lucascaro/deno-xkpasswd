@@ -1,4 +1,4 @@
-import { readFileSync } from "deno";
+const { readFileSync } = Deno;
 
 export default function(
   wordsFile: string,
