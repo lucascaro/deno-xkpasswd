@@ -1,6 +1,6 @@
 #!/usr/bin/env deno --allow-read --allow-write
 
-import getArgParser from "args.ts";
+import getArgParser from "./args.ts";
 import { open, stdin, stdout } from "deno";
 
 const getCLIArg = getArgParser({
@@ -31,7 +31,7 @@ const MAX_WORD_LEN = Number(getCLIArg("max-len", "10"));
   }
   const words = text
     .split("\n")
-    .filter((w) => w.length >= MIN_WORD_LEN && w.length <= MAX_WORD_LEN);
+    .filter(w => w.length >= MIN_WORD_LEN && w.length <= MAX_WORD_LEN);
   const encoder = new TextEncoder();
   const encoded = encoder.encode(JSON.stringify(words));
   await outFile.write(encoded);

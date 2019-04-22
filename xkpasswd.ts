@@ -1,7 +1,7 @@
 #!/usr/bin/env deno --allow-read
 
-import cliArgParser from "args.ts";
-import PasswordHelper from "password.ts";
+import cliArgParser from "./args.ts";
+import PasswordHelper from "./password.ts";
 
 const getCLIArg = cliArgParser({
   c: ["count"],
