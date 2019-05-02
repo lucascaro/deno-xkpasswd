@@ -1,7 +1,7 @@
 #!/usr/bin/env deno --allow-read --allow-write
 
 import getArgParser from "./args.ts";
-import { open, stdin, stdout } from "deno";
+const { open, stdin, stdout } = Deno;
 
 const getCLIArg = getArgParser({
   i: "in-file",
@@ -9,15 +9,24 @@ const getCLIArg = getArgParser({
   l: "min-len",
   L: "max-len"
 });
-const IN_FILE_NAME = getCLIArg("in-file");
-const OUT_FILE_NAME = getCLIArg("out-file");
+const IN_FILE_NAME = String(getCLIArg("in-file", ""));
+const OUT_FILE_NAME = String(getCLIArg("out-file", ""));
 const MIN_WORD_LEN = Number(getCLIArg("min-len", "4"));
 const MAX_WORD_LEN = Number(getCLIArg("max-len", "10"));
 
+async function openFile(
+  name: string,
+  mode: Deno.OpenMode,
+  fallback: Deno.File
+): Promise<Deno.File> {
+  return name !== "" ? await open(IN_FILE_NAME, mode) : fallback;
+}
+
 (async function() {
   const decoder = new TextDecoder("utf-8");
-  const inFile = IN_FILE_NAME ? await open(IN_FILE_NAME, "r") : stdin;
-  const outFile = OUT_FILE_NAME ? await open(OUT_FILE_NAME, "r") : stdout;
+  const inFile = await openFile(IN_FILE_NAME, "r", stdin);
+  const outFile = await openFile(OUT_FILE_NAME, "w", stdout);
+
   let text = "";
 
   const buffer = new Uint8Array(10);
@@ -31,7 +40,9 @@ const MAX_WORD_LEN = Number(getCLIArg("max-len", "10"));
   }
   const words = text
     .split("\n")
-    .filter(w => w.length >= MIN_WORD_LEN && w.length <= MAX_WORD_LEN);
+    .filter(w => w.length >= MIN_WORD_LEN && w.length <= MAX_WORD_LEN)
+    .map(w => w.replace(/\0+/g, "").trim());
+
   const encoder = new TextEncoder();
   const encoded = encoder.encode(JSON.stringify(words));
   await outFile.write(encoded);
